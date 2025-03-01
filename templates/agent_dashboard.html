@@ -1,0 +1,28 @@
+
+
+
+<h2>Welcome, Agent Dashboard</h2>
+<a href="{% url 'agent_logout' %}">Logout</a>
+<a href="{% url 'add_property' %}">Add New Property</a>
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Location</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    {% for property in properties %}
+        <tr>
+            <td>{{ property.property_name }}</td>
+            <td>{{ property.property_location }}</td>
+            <td>{{ property.property_status }}</td>
+            <td>
+                <a href="{% url 'edit_property' property.id %}">Edit</a>
+                <a href="{% url 'delete_property' property.id %}">Delete</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+

@@ -2,13 +2,17 @@
 views.py - This module contains the view functions for the real estate application.
 """
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
-from .models import Property
+from .models import Property, Agent
 from datetime import datetime
 from django.db.models import Q
 from .models import Location
 from django.contrib import messages
+
+
+from django.contrib.auth import logout
+from .forms import PropertyForm
 
 
 def index(request):
@@ -342,3 +346,97 @@ def add_location(request):
 
 #     # Render the contact form for GET requests
 #     return render(request, 'index.html', {'form': form})
+
+def agent_login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        try:
+            agent = Agent.objects.get(username=username, password=password)  # Normally you should hash passwords
+            request.session['agent_id'] = agent.id  # Store agent in session
+            return redirect('agent_dashboard')
+        except Agent.DoesNotExist:
+            messages.error(request, "Invalid credentials.")
+    return render(request, 'agent_login.html')
+
+
+def get_logged_in_agent(request):
+    agent_id = request.session.get('agent_id')
+    if not agent_id:
+        return None
+    return Agent.objects.get(id=agent_id)
+
+def agent_dashboard(request):
+    agent = get_logged_in_agent(request)
+    if not agent:
+        return redirect('agent_login')
+    
+    # Fetch properties only in the agent's locations
+    properties = Property.objects.filter(property_location__in=agent.allocated_locations.all())
+    return render(request, 'agent_dashboard.html', {'properties': properties})
+
+
+def add_property_agent(request):
+    agent = get_logged_in_agent(request)
+    if not agent:
+        return redirect('agent_login')
+
+    if request.method == 'POST':
+        form = PropertyForm(request.POST, request.FILES)
+        if form.is_valid():
+            property = form.save(commit=False)
+            # Set property location automatically (assuming one location per agent)
+            locations = agent.allocated_locations.all()
+            if locations.count() == 1:
+                property.property_location = locations.first()
+            property.save()
+            return redirect('agent_dashboard')
+    else:
+        form = PropertyForm()
+        # Pre-set the location if only one location is assigned
+        if agent.allocated_locations.count() == 1:
+            form.fields['property_location'].initial = agent.allocated_locations.first()
+
+    form.fields['property_location'].disabled = True  # Disable editing location
+    return render(request, 'property_form.html', {'form': form})
+
+def edit_property(request, property_id):
+    agent = get_logged_in_agent(request)
+    if not agent:
+        return redirect('agent_login')
+
+    property = get_object_or_404(Property, id=property_id)
+
+    # Ensure agent can only edit properties in their locations
+    if property.property_location not in agent.allocated_locations.all():
+        return HttpResponseForbidden("You are not allowed to edit this property.")
+
+    if request.method == 'POST':
+        form = PropertyForm(request.POST, request.FILES, instance=property)
+        if form.is_valid():
+            form.save()
+            return redirect('agent_dashboard')
+    else:
+        form = PropertyForm(instance=property)
+
+    form.fields['property_location'].disabled = True  # Disable location editing
+    return render(request, 'property_form.html', {'form': form})
+
+def delete_property(request, property_id):
+    agent = get_logged_in_agent(request)
+    if not agent:
+        return redirect('agent_login')
+
+    property = get_object_or_404(Property, id=property_id)
+
+    # Security Check - Ensure agent can only delete properties from their own locations
+    if property.property_location not in agent.allocated_locations.all():
+        return HttpResponseForbidden("You are not allowed to delete this property.")
+
+    property.delete()
+    return redirect('agent_dashboard')
+
+def agent_logout(request):
+    logout(request)
+    request.session.flush()
+    return redirect('agent_login')

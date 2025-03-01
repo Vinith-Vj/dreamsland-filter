@@ -1,0 +1,111 @@
+
+
+
+
+<div class="container mt-4">
+    <h2>Add Property</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="property_name">Property Name</label>
+            <input type="text" class="form-control" name="property_name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="bhk">BHK</label>
+            <input type="number" class="form-control" name="bhk">
+        </div>
+
+        <div class="form-group">
+            <label for="square_feet">Square Feet</label>
+            <input type="number" class="form-control" name="square_feet">
+        </div>
+
+        <div class="form-group">
+            <label for="possession_date">Possession Date</label>
+            <input type="date" class="form-control" name="possession_date" required>
+        </div>
+
+        <div class="form-group">
+            <label for="property_status">Property Status</label>
+            <select class="form-control" name="property_status">
+                <option value="available">Available</option>
+                <option value="sold">Sold</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="property_description">Description</label>
+            <textarea class="form-control" name="property_description" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="short_description">Short Description</label>
+            <textarea class="form-control" name="short_description" rows="2"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="price">Price (in Rupees)</label>
+            <input type="number" step="0.01" class="form-control" name="price">
+        </div>
+
+        <div class="form-group">
+            <label for="property_type">Property Type</label>
+            <select class="form-control" name="property_type" required>
+                <option value="residential">Residential</option>
+                <option value="commercial">Commercial</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="property_subtype">Property Subtype</label>
+            <select class="form-control" name="property_subtype" required>
+                <option value="residential_villas/houses">Residential Villa / Houses</option>
+                <option value="residential_apartments">Residential Apartment</option>
+                <option value="residential_land">Residential Land</option>
+                <option value="residential_others">Residential Other</option>
+                <option value="commercial_shop">Commercial Shop</option>
+                <option value="commercial_land">Commercial Land</option>
+                <option value="commercial_building">Commercial Building</option>
+                <option value="commercial_others">Commercial Other</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="plot_area">Plot Area</label>
+            <input type="text" class="form-control" name="plot_area">
+        </div>
+
+        <div class="form-group">
+            <label for="plot_unit">Plot Unit</label>
+            <select class="form-control" name="plot_unit">
+                <option value="cent">Cent</option>
+                <option value="acre">Acre</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="property_main_image">Main Image</label>
+            <input type="file" class="form-control-file" name="property_main_image">
+        </div>
+
+        <div class="form-group">
+            <label for="gallery_1">Gallery Image 1</label>
+            <input type="file" class="form-control-file" name="gallery_1">
+        </div>
+
+        <div class="form-group">
+            <label for="gallery_2">Gallery Image 2</label>
+            <input type="file" class="form-control-file" name="gallery_2">
+        </div>
+
+        <div class="form-group">
+            <label for="gallery_3">Gallery Image 3</label>
+            <input type="file" class="form-control-file" name="gallery_3">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Property</button>
+        <a href="{% url 'agent_dashboard' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
