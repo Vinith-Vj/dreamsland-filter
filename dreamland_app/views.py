@@ -147,14 +147,25 @@ def view_location(request, location_slug):
     return render(request, "locations.html", context)
 
 
+def safe_int_or_none(value):
+    """Convert value to integer, or return None if empty/invalid."""
+    try:
+        return int(value) if value.strip() else None
+    except (ValueError, AttributeError):
+        return None
+
+
 def add_property(request):
     """Add a new property to the database."""
     if request.method == "POST":
         try:
+            
             property_name = request.POST.get("property_name")
-            property_location = request.POST.get("property_location")
-            bhk = int(request.POST.get("bhk", 0))
-            square_feet = int(request.POST.get("square_feet", 0))
+            # property_location = request.POST.get("property_location")
+            agent = request.user
+            allocated_locations = agent.allocated_locations
+            bhk = safe_int_or_none(request.POST.get("bhk", 0))
+            square_feet = safe_int_or_none(request.POST.get("square_feet", 0))
             possession_date = datetime.strptime(
                 request.POST.get("possession_date"), "%Y-%m-%d"
             )
@@ -163,11 +174,19 @@ def add_property(request):
             short_description = request.POST.get("short_description", "")
             property_type = request.POST.get("property_type", "residential")
             property_subtype = request.POST.get("property_subtype", "villas")
-            property_image = request.FILES.get("property_images")
+            # property_image = request.FILES.get("property_images")
+            property_main_image = request.FILES.get("property_main_image")
+            gallery_1 = request.FILES.get("gallery_1")
+            gallery_2 = request.FILES.get("gallery_2")
+            gallery_3 = request.FILES.get("gallery_3")
+            plot_area = request.POST.get("plot_area")
+            plot_unit = request.POST.get("plot_unit")
+            price = request.POST.get("price")
 
             property_obj = Property(
                 property_name=property_name,
-                property_location=property_location,
+                # property_location=property_location,
+                allocated_locations=allocated_locations,
                 bhk=bhk,
                 square_feet=square_feet,
                 possession_date=possession_date,
@@ -176,7 +195,13 @@ def add_property(request):
                 short_description=short_description,
                 property_type=property_type,
                 property_subtype=property_subtype,
-                property_main_image=property_image,
+                property_main_image=property_main_image,
+                gallery_1=gallery_1,
+                gallery_2=gallery_2,
+                gallery_3=gallery_3,
+                plot_area=plot_area,
+                plot_unit=plot_unit,
+                price=price,
             )
             property_obj.save()
 
@@ -312,40 +337,6 @@ def add_location(request):
 
     return render(request, "index.html")
 
-
-# def contact_view(request):
-#     if request.method == 'POST':
-#         form = ContactForm(request.POST)
-#         if form.is_valid():
-#             fullname = form.cleaned_data['fullname']
-#             phone = form.cleaned_data['phone']
-#             listingtype = form.cleaned_data['listingtype']
-#             address = form.cleaned_data['address']
-
-#             # Compose the email message
-#             message = f"""
-#             Full Name: {fullname}
-#             Phone: {phone}
-#             Listing Type: {listingtype}
-#             Comments: {address}
-#             """
-
-#             # Send email to sales@dreamlandrealty.com
-#             send_mail(
-#                 'Contact Form Submission',
-#                 message,
-#                 settings.DEFAULT_FROM_EMAIL,  # From email (sales@dreamlandrealty.com)
-#                 ['sales@dreamlandrealty.com'],  # To email (recipient)
-#                 fail_silently=False,  # Will raise an error if the email sending fails
-#             )
-
-#             # Redirect or show a success page after form submission
-#             return render(request, 'index.html')  # You can create a thank-you page for confirmation
-#     else:
-#         form = ContactForm()
-
-#     # Render the contact form for GET requests
-#     return render(request, 'index.html', {'form': form})
 
 def agent_login(request):
     if request.method == 'POST':
