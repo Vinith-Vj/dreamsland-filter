@@ -8,9 +8,20 @@
 
 
 from django import forms
-from .models import Property
+from .models import Property, Location
 
 class PropertyForm(forms.ModelForm):
     class Meta:
         model = Property
-        exclude = ['property_id']
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        locations_queryset = kwargs.pop('locations_queryset', Location.objects.none())
+        super(PropertyForm, self).__init__(*args, **kwargs)
+
+        # Filter property_location field
+        self.fields['property_location'] = forms.ModelChoiceField(
+            queryset=locations_queryset,
+            required=True,
+            label="Property Location"
+        )

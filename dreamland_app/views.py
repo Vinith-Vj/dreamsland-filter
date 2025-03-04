@@ -9,6 +9,7 @@ from datetime import datetime
 from django.db.models import Q
 from .models import Location
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 
 from django.contrib.auth import logout
@@ -156,14 +157,14 @@ def safe_int_or_none(value):
 
 
 def add_property(request):
+    # Fetch the logged-in agent
     """Add a new property to the database."""
     if request.method == "POST":
         try:
             
             property_name = request.POST.get("property_name")
-            # property_location = request.POST.get("property_location")
-            agent = request.user
-            allocated_locations = agent.allocated_locations
+            property_location_id = request.POST.get("property_location")
+            property_location = Location.objects.get(id=property_location_id) 
             bhk = safe_int_or_none(request.POST.get("bhk", 0))
             square_feet = safe_int_or_none(request.POST.get("square_feet", 0))
             possession_date = datetime.strptime(
@@ -186,7 +187,7 @@ def add_property(request):
             property_obj = Property(
                 property_name=property_name,
                 # property_location=property_location,
-                allocated_locations=allocated_locations,
+                property_location=property_location,
                 bhk=bhk,
                 square_feet=square_feet,
                 possession_date=possession_date,
@@ -213,7 +214,10 @@ def add_property(request):
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)})
 
-    return render(request, "add_property.html")
+
+    allocated_locations = Location.objects.all()  # or filter to agent's locations if logged in
+    return render(request, "add_property.html", {"allocated_locations": allocated_locations})
+    # return render(request, "add_property.html")
 
 
 def propertydetails(request, property_id):
@@ -367,29 +371,36 @@ def agent_dashboard(request):
     return render(request, 'agent_dashboard.html', {'properties': properties})
 
 
+
 def add_property_agent(request):
     agent = get_logged_in_agent(request)
     if not agent:
         return redirect('agent_login')
 
+    # Fetch only allocated locations for this agent
+    allocated_locations = agent.allocated_locations.all()
+
     if request.method == 'POST':
-        form = PropertyForm(request.POST, request.FILES)
+        form = PropertyForm(request.POST, request.FILES, locations_queryset=allocated_locations)
         if form.is_valid():
             property = form.save(commit=False)
-            # Set property location automatically (assuming one location per agent)
-            locations = agent.allocated_locations.all()
-            if locations.count() == 1:
-                property.property_location = locations.first()
+
+            # Assign location automatically if the agent has only one allocated location
+            if allocated_locations.count() == 1:
+                property.property_location = allocated_locations.first()
+
             property.save()
             return redirect('agent_dashboard')
     else:
-        form = PropertyForm()
-        # Pre-set the location if only one location is assigned
-        if agent.allocated_locations.count() == 1:
-            form.fields['property_location'].initial = agent.allocated_locations.first()
+        form = PropertyForm(locations_queryset=allocated_locations)
 
-    form.fields['property_location'].disabled = True  # Disable editing location
+        # Pre-set and disable location if agent has only one location
+        if allocated_locations.count() == 1:
+            form.fields['property_location'].initial = allocated_locations.first()
+            # form.fields['property_location'].disabled = True
+
     return render(request, 'property_form.html', {'form': form})
+
 
 def edit_property(request, property_id):
     agent = get_logged_in_agent(request)

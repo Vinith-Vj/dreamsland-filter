@@ -6,6 +6,7 @@ from django.db.models import Max
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 
 STATUS_CHOICES = [
     ("available", "Available"),
@@ -52,6 +53,7 @@ class Location(models.Model):
         return self.location_name
 
 class Agent(models.Model):
+    # user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="agent_profile", null=True, blank=True)
     """
     Model to manage real estate agents and their assigned locations.
     """

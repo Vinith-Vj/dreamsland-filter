@@ -13,6 +13,15 @@
         </div>
 
         <div class="form-group">
+            <label for="property_location">Select Property Location</label>
+            <select name="property_location" id="property_location" required>
+                {% for location in allocated_locations %}
+                    <option value="{{ location.id }}">{{ location.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
             <label for="bhk">BHK</label>
             <input type="number" class="form-control" name="bhk">
         </div>
