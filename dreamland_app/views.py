@@ -439,6 +439,9 @@ def delete_property(request, property_id):
     return redirect('agent_dashboard')
 
 def agent_logout(request):
-    logout(request)
-    request.session.flush()
+     # Clear only agent-specific session data
+    if 'agent_id' in request.session:
+        del request.session['agent_id']  # Remove agent session key
+
+    # Don't call logout() because it affects Django admin too
     return redirect('agent_login')
