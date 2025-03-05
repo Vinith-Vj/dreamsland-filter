@@ -1,0 +1,21 @@
+body {
+    background-color: #222;
+    color: #ddd;
+    font-family: Arial, sans-serif;
+}
+
+.bg-white {
+    background-color: #333 !important;
+    color: #fff;
+}
+
+.form-control, .form-select {
+    background-color: #444;
+    color: #fff;
+    border: 1px solid #555;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
