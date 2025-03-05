@@ -2104,3 +2104,27 @@ p {
     background-color: #323d97;
     border: none;
 }
+
+
+
+
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.form-control-file {
+    border: none;
+}
+
+.text-danger {
+    color: red;
+    font-size: 14px;
+}
