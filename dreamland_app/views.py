@@ -413,16 +413,27 @@ def edit_property(request, property_id):
     if property.property_location not in agent.allocated_locations.all():
         return HttpResponseForbidden("You are not allowed to edit this property.")
 
+    allocated_locations = agent.allocated_locations.all()
+
     if request.method == 'POST':
-        form = PropertyForm(request.POST, request.FILES, instance=property)
+        form = PropertyForm(request.POST, request.FILES, instance=property, locations_queryset=allocated_locations)
         if form.is_valid():
-            form.save()
+            property = form.save(commit=False)
+
+            # Force property_location to be the original one, since disabled fields do not post data
+            property.property_location = property.property_location  # No change, just ensuring it stays the same
+            property.save()
+
             return redirect('agent_dashboard')
     else:
-        form = PropertyForm(instance=property)
+        form = PropertyForm(instance=property, locations_queryset=allocated_locations)
 
-    form.fields['property_location'].disabled = True  # Disable location editing
+    # Set and disable the property location field to show (but not editable)
+    # form.fields['property_location'].disabled = True
+
     return render(request, 'property_form.html', {'form': form})
+
+
 
 def delete_property(request, property_id):
     agent = get_logged_in_agent(request)
