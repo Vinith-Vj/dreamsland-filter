@@ -118,6 +118,9 @@ class PropertyAdmin(admin.ModelAdmin):
         ("Gallery", {
             "fields": ("property_main_image", "gallery_1", "gallery_2", "gallery_3"),
         }),
+        ("Owner Information", {
+            "fields": ("property_owner_name" , "phone_number" , "whatsapp_number" , ),
+        }),
     )
 
     def get_form(self, request, obj=None, **kwargs):

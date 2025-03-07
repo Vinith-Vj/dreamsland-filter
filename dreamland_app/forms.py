@@ -16,6 +16,9 @@ class PropertyForm(forms.ModelForm):
         fields = '__all__'
         widgets = {
             'property_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'property_owner_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'phone_number': forms.NumberInput(attrs={'class': 'form-control'}),
+            'whatsapp_number': forms.NumberInput(attrs={'class': 'form-control'}),
             'property_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             'short_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             'property_location': forms.Select(attrs={'class': 'form-select'}),

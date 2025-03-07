@@ -163,6 +163,7 @@ def add_property(request):
         try:
             
             property_name = request.POST.get("property_name")
+            property_owner_name = request.POST.get("property_name")
             property_location_id = request.POST.get("property_location")
             property_location = Location.objects.get(id=property_location_id) 
             bhk = safe_int_or_none(request.POST.get("bhk", 0))
@@ -186,6 +187,7 @@ def add_property(request):
 
             property_obj = Property(
                 property_name=property_name,
+                property_owner_name=property_owner_name,
                 # property_location=property_location,
                 property_location=property_location,
                 bhk=bhk,

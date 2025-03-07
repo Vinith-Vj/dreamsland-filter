@@ -105,6 +105,9 @@ class Property(models.Model):
         max_length=10, unique=True, editable=False, blank=True, null=True
     )
     property_name = models.CharField(max_length=50)
+    property_owner_name = models.CharField(max_length=50, blank=True, null=True )
+    phone_number = models.CharField(max_length=15, blank=True, null=True, help_text="Contact phone number")
+    whatsapp_number = models.CharField(max_length=15, blank=True, null=True, help_text="WhatsApp contact number")
     property_location = models.ForeignKey(
         Location, on_delete=models.SET_NULL, null=True, blank=True, related_name="locations"
     )

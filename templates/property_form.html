@@ -45,6 +45,9 @@
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="gallery-tab" data-bs-toggle="tab" data-bs-target="#gallery" type="button" role="tab">Gallery</button>
                     </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="owner-tab" data-bs-toggle="tab" data-bs-target="#owner" type="button" role="tab">Owner Information</button>
+                    </li>
                 </ul>
 
                 <!-- Tab Content -->
@@ -214,6 +217,34 @@
                             </div>
                             <div class="col-9">
                                 {{ form.gallery_3 }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Owner Tab -->
+                    <div class="tab-pane fade" id="owner" role="tabpanel">
+                        <div class="mb-3 row">
+                            <div class="col-3">
+                                <label class="form-label">{{ form.property_owner_name.label }}</label>
+                            </div>
+                            <div class="col-9">
+                                {{ form.property_owner_name }}
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <div class="col-3">
+                                <label class="form-label">{{ form.phone_number.label }}</label>
+                            </div>
+                            <div class="col-9">
+                                {{ form.phone_number }}
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <div class="col-3">
+                                <label class="form-label">{{ form.whatsapp_number.label }}</label>
+                            </div>
+                            <div class="col-9">
+                                {{ form.whatsapp_number }}
                             </div>
                         </div>
                     </div>
