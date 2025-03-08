@@ -30,4 +30,5 @@ urlpatterns = [
     path('agent/add-property/', views.add_property_agent, name='add_property_agent'),
     path('agent/edit-property/<int:property_id>/', views.edit_property, name='edit_property'),
     path('agent/delete-property/<int:property_id>/', views.delete_property, name='delete_property'),
+    path('agent_search', views.search_agent_properties, name='search_agent_properties'),
 ]

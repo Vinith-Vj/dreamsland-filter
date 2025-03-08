@@ -458,3 +458,33 @@ def agent_logout(request):
 
     # Don't call logout() because it affects Django admin too
     return redirect('agent_login')
+
+
+def search_agent_properties(request):
+    """Search for properties based on location or property ID using a single input field."""
+    locations = Location.objects.all()
+    
+    # Get the user's search query from a single input field
+    search_query = request.GET.get("search", "").strip()
+    searched_properties = Property.objects.none()  # Default empty queryset
+
+    if search_query:
+        # Try filtering by property ID first
+        searched_properties = Property.objects.filter(property_id__icontains=search_query)
+
+        # If no property matches the ID, try filtering by location
+        if not searched_properties.exists():
+            searched_properties = Property.objects.filter(
+                property_location__location_name__icontains=search_query
+            )
+
+    context = {
+        "locations": locations,
+        "search_query": search_query,
+        "properties": searched_properties,
+        "message": (
+            None if searched_properties.exists() else f"No properties found for '{search_query}'."
+        ),
+    }
+
+    return render(request, "agent_propertylist.html", context)
