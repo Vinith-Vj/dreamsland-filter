@@ -137,7 +137,7 @@
               type="text"
               id="searchInput"
               name="search"
-              placeholder="Search by Location or Property ID"
+              placeholder="Search by Location or ID"
               aria-label="Search properties"
               list="locationList"
               autocomplete="off"
@@ -158,9 +158,26 @@
     </div> {% endcomment %}
 
     <div class="content">
-      <div class="dashboard-header">
-        <h2>Properties</h2>
-        <a href="{% url 'add_property_agent' %}" class="btn btn-success">Add New Property</a>
+      <div class="dashboard-header d-flex flex-lg-row w-100 justify-content-between flex-column ">
+        <div>
+          <h2>Properties</h2>
+          <a href="{% url 'add_property_agent' %}" class="btn btn-success">Add New Property</a>
+        </div>
+        <div class=" d-none d-sm-block">
+          <form class="d-flex mt-3" role="search" method="GET" action="{% url 'search_agent_properties' %}">
+            <input class="form-control me-2" 
+            type="text"
+            id="searchInput"
+            name="search"
+            placeholder="Search by Location or ID"
+            aria-label="Search properties"
+            list="locationList"
+            autocomplete="off"
+            data-aos="fade-right"
+            value="{{ search_query }}">
+            <button class="btn btn-success" type="submit">Search</button>
+          </form>
+        </div>
       </div>
       <div class="card shadow-sm mt-4">
         <div class="card-body">
